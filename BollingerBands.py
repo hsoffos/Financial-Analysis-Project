@@ -2,6 +2,8 @@ import pandas as pd
 import requests
 import matplotlib.pyplot as plt
 
+# Bollinger Bands are typically examined for 6-month narrowness; more narrow = more interesting
+
 func = 'BBANDS'
 symbol = 'IBM'
 interval = 'weekly'
