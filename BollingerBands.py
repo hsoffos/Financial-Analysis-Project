@@ -2,7 +2,6 @@
 
 import pandas as pd
 import matplotlib.pyplot as plt
-import matplotlib.legend
 from cb91visuals import *
 
 # Bollinger Bands are typically examined for 6-month narrowness; more narrow = more interesting
