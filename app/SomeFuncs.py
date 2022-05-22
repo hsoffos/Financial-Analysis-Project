@@ -1,11 +1,8 @@
-import time
-
 import requests
 import pandas as pd
 
-company_symbols = ['IBM', 'MSFT', 'DAC', 'GOOG']
 
-def getBalanceSheets(symbol):
+def get_balance_sheets(ticker):
     fields = ['fiscalDateEnding', 'reportedCurrency', 'totalAssets', 'totalCurrentAssets',
               'cashAndCashEquivalentsAtCarryingValue', 'cashAndShortTermInvestments', 'inventory',
               'currentNetReceivables', 'totalNonCurrentAssets', 'propertyPlantEquipment',
@@ -13,15 +10,14 @@ def getBalanceSheets(symbol):
               'goodwill', 'investments', 'longTermInvestments', 'shortTermInvestments', 'otherCurrentAssets',
               'otherNonCurrrentAssets', 'totalLiabilities', 'totalCurrentLiabilities', 'currentAccountsPayable',
               'deferredRevenue', 'currentDebt', 'shortTermDebt', 'totalNonCurrentLiabilities',
-              'capitalLeaseObligations', 'longTermDebt', 'currentLongTermDebt', 'longTermDebtNoncurrent', 'shortLongTermDebtTotal',
+              'capitalLeaseObligations', 'longTermDebt', 'currentLongTermDebt', 'longTermDebtNoncurrent',
+              'shortLongTermDebtTotal',
               'otherCurrentLiabilities', 'otherNonCurrentLiabilities', 'totalShareholderEquity', 'treasuryStock',
               'retainedEarnings', 'commonStock', 'commonStockSharesOutstanding']
     df = pd.DataFrame()
     func = 'BALANCE_SHEET'
     apikey = 'KM2RBMGCOTIXETTD'
-    url = "https://www.alphavantage.co/query?function={}&symbol={}&apikey={}".format(func,
-                                                                                    symbol,
-                                                                                    apikey)
+    url = "https://www.alphavantage.co/query?function={}&symbol={}&apikey={}".format(func, ticker, apikey)
     r = requests.get(url)
     f = r.json()
     for metadata in f:
@@ -36,12 +32,12 @@ def getBalanceSheets(symbol):
             df = pd.concat([df, df2])
 
     df.columns = fields
-    df['symbol'] = symbol
-    #print(df)
+    df['symbol'] = ticker
+    # print(df)
     return df
 
 
-def getIncomeStatements(symbol):
+def get_income_statements(ticker):
     fields = ["fiscalDateEnding", "reportedCurrency", "grossProfit", "totalRevenue",
               "costOfRevenue", "costofGoodsAndServicesSold", "operatingIncome",
               "sellingGeneralAndAdministrative", "researchAndDevelopment", "operatingExpenses",
@@ -54,9 +50,7 @@ def getIncomeStatements(symbol):
     df = pd.DataFrame()
     func = 'INCOME_STATEMENT'
     apikey = 'KM2RBMGCOTIXETTD'
-    url = "https://www.alphavantage.co/query?function={}&symbol={}&apikey={}".format(func,
-                                                                                     symbol,
-                                                                                     apikey)
+    url = "https://www.alphavantage.co/query?function={}&symbol={}&apikey={}".format(func, ticker, apikey)
     r = requests.get(url)
     f = r.json()
     for metadata in f:
@@ -70,11 +64,11 @@ def getIncomeStatements(symbol):
             df = pd.concat([df, df2])
 
     df.columns = fields
-    df['symbol'] = symbol
+    df['symbol'] = ticker
     return df.reset_index()
 
 
-def getCompanyOverview(symbol):
+def get_company_overview(ticker):
     fields = ["Symbol", "AssetType", "Name", "Description",
               "CIK", "Exchange", "Currency", "Country", "Sector",
               "Industry", "Address", "FiscalYearEnd", "LatestQuarter",
@@ -90,9 +84,7 @@ def getCompanyOverview(symbol):
     df = pd.DataFrame()
     func = 'OVERVIEW'
     apikey = 'KM2RBMGCOTIXETTD'
-    url = "https://www.alphavantage.co/query?function={}&symbol={}&apikey={}".format(func,
-                                                                                     symbol,
-                                                                                     apikey)
+    url = "https://www.alphavantage.co/query?function={}&symbol={}&apikey={}".format(func, ticker, apikey)
     r = requests.get(url)
     f = r.json()
 
@@ -101,31 +93,6 @@ def getCompanyOverview(symbol):
     df = pd.concat([df, df2])
 
     df.columns = fields
-    df['symbol'] = symbol
+    df['symbol'] = ticker
     return df.reset_index()
-
-
-# Put all company overviews in a single table
-overview_table = pd.DataFrame()
-for symbol in company_symbols:
-    time.sleep(1)
-    overview_table = pd.concat([overview_table, getCompanyOverview(symbol)])
-print(overview_table)
-# Put all balance sheets in a single table
-balance_table = pd.DataFrame()
-for symbol in company_symbols:
-    time.sleep(1)
-    balance_table = pd.concat([balance_table, getBalanceSheets(symbol)])
-print(balance_table)
-# Put all income statements in a single table
-income_table = pd.DataFrame()
-for symbol in company_symbols:
-    time.sleep(1)
-    income_table = pd.concat([income_table, getBalanceSheets(symbol)])
-print(income_table)
-
-
-
-
-
 

@@ -32,7 +32,7 @@ df_av_macd = df_av_macd.iloc[::-1]
 print(df_av_macd)
 # Request historic pricing data via finance.yahoo.com API
 df_yf = yf.Ticker('IBM').history(period='1y')[map(str.title, ['open', 'close', 'low', 'high', 'volume'])]
-
+print(df_yf)
 df_av_macd.index = pd.to_datetime(list(df_av_macd.index), format ='%Y-%m-%d %H:%M')
 #plt.plot(df)
 #plt.show()
