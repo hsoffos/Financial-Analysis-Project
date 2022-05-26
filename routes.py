@@ -11,7 +11,7 @@ def home():
 
 @app.route("/addperson")
 def addperson():
-    return render_template("index.html")
+    return render_template("index_landing.html")
 
 
 @app.route("/personadd", methods=['POST'])
@@ -23,4 +23,4 @@ def personadd():
     db.session.add(entry)
     db.session.commit()
 
-    return render_template("index.html")
+    return render_template("index_landing.html")

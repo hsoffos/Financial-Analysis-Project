@@ -1,0 +1,128 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.1/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-+0n0xVW2eSR5OomGNYDnhzAbDsOXxcvSN1TPprVMTNDbiYZCxYbOOl7+AMvyTG2x" crossorigin="anonymous">
+
+    <title></title>
+
+    <script>
+        async function callback() {
+            let Stock = document.getElementById('stock').value;
+            let Metric = document.getElementById('metric').value;
+            let Interval = document.getElementById('interval').value;
+            let response = await fetch("/callback-finances/getBalance?data=" + Stock +
+                                                        "&metric=" + Metric +
+                                                        "&interval=" + Interval);
+            if (response.ok) {
+                let chartJson = await response.json();
+                console.log(chartJson)
+                if (response.ok) {
+                    let stats = await fetch("/callback-finances/getBalanceMeta?data=" + Stock +
+                                                        "&metric=" + Metric +
+                                                        "&interval=" + Interval);
+                    //console.log(stats.json())
+                    stats = stats.json()
+                    console.log(stats)
+                    stats.then(value => {info(value, Stock);})
+                    Plotly.newPlot('chart', chartJson, {});
+                } else {
+                    alert("HTTP-Error: " + response.status + "on getInfo");
+                }
+                //console.log(chartJson.data[0].y)
+
+            } else {
+                alert("HTTP-Error: " + response.status + "on getStock");
+            }
+        }
+        function info(stats, ticker) {
+            let name = document.getElementById('symbol');
+            name.innerHTML = ticker;
+            name = document.getElementById('companyName');
+            name.innerHTML = ticker;
+            name = document.getElementById('totalAssets');
+            name.innerHTML = stats[0]
+            name = document.getElementById('totalLiabilities');
+            name.innerHTML = stats[1];
+            name = document.getElementById('totalShareholderEquity');
+            name.innerHTML = stats[2];
+        }
+    </script>
+</head>
+
+<body>
+    <div class="container">
+        <div class="row">
+            <div class="col text-light bg-dark" style="margin:20px 0px 20px 0px">
+                <h1 style="padding:20px 0px 20px 0px">Stock Financial Data</h1>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col"><b>Select stock</b></div>
+            <div class="col">
+                <select id="stock" class="form-select" aria-label="Select" >
+                    <option selected value="IBM">IBM</option>
+                    <option value="DAC">DAC</option>
+                    <option value="GOOG">Google</option>
+                    <option value="MSFT">Microsoft</option>
+                </select>
+            </div>
+            <div class="col"><b>primary metric</b></div>
+
+            <div class="col">
+                <select id="metric" class="form-select" aria-label="Select" >
+                    <option selected value="totalCurrentAssets">Total Current Assets</option>
+                    <option value="totalAssets">Total Assets</option>
+                    <option value="commonStock">Common Stock</option>
+                    <option value="totalLiabilities">Total Liabilities</option>
+                    <option value="totalCurrentLiabilities">Total Current Liabilities</option>
+                    <option value="deferredRevenue">Deferred Revenue</option>
+                    <option value="goodwill">Goodwill</option>
+                </select>
+            </div>
+            <div class="col"><b>Interval</b></div>
+
+            <div class="col">
+                <select id="interval" class="form-select" aria-label="Select" >
+                    <option selected value="quarterly">Quarterly</option>
+                    <option value="annually">Annually</option>
+                </select>
+            </div>
+
+            <div class="col">
+                <button type="button" class="btn btn-primary" onclick="callback()">Fetch stock</button>
+            </div>
+            <div class="w-100" style="padding:10px;text-align:right;font-size: small;"><i>** ** ** ** **</i></div>
+
+            <div class="col-3"><p><b>Stock info</b></p>
+                <p>Symbol: <span id="symbol">N/A</span></p>
+                <p>Total Assets: <span id="totalAssets">N/A</span></p>
+                <p>Total Liabilities: <span id="totalLiabilities">N/A</span></p>
+                <p>Shareholder Equity: <span id="totalShareholderEquity">N/A</span></p>
+            </div>
+            <div class="col-9">
+                <h2 id="companyName"></h2>
+                <div id="chart" class="chart" style="height: 450px;border: 1px solid;
+                    box-shadow: 5px 5px 5px #888888;">
+                </div>
+            </div>
+            <div class="col-12" style="font-size:smaller;padding:10px;text-align: right;">
+                <i>This data currently powered by alpha vantage</i>
+                <br/>
+                <i>** **</i>
+           </div>
+        </div>
+    </div>
+
+    <script>callback();</script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.1/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-gtEjrD/SeCtmISkJkNUaaKMoLD0//ElJ19smozuHV6z3Iehds+3Ulb9Bn9Plx0x4"
+        crossorigin="anonymous"></script>
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+
+</body>
+</html>
